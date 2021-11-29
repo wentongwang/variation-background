@@ -20,7 +20,52 @@ import com.spring.variation.dao.VariationRepository;
 import com.spring.variation.domain.Genomic;
 import com.spring.variation.domain.User;
 import com.spring.variation.domain.Variation;
-import com.spring.variation.domain.VariationBasic;
+import com.spring.variation.domain.VariationBasicChr1;
+import com.spring.variation.domain.VariationBasicChr10;
+import com.spring.variation.domain.VariationBasicChr11;
+import com.spring.variation.domain.VariationBasicChr12;
+import com.spring.variation.domain.VariationBasicChr13;
+import com.spring.variation.domain.VariationBasicChr14;
+import com.spring.variation.domain.VariationBasicChr15;
+import com.spring.variation.domain.VariationBasicChr16;
+import com.spring.variation.domain.VariationBasicChr17;
+import com.spring.variation.domain.VariationBasicChr18;
+import com.spring.variation.domain.VariationBasicChr19;
+import com.spring.variation.domain.VariationBasicChr2;
+import com.spring.variation.domain.VariationBasicChr20;
+import com.spring.variation.domain.VariationBasicChr21;
+import com.spring.variation.domain.VariationBasicChr22;
+import com.spring.variation.domain.VariationBasicChr3;
+import com.spring.variation.domain.VariationBasicChr4;
+import com.spring.variation.domain.VariationBasicChr5;
+import com.spring.variation.domain.VariationBasicChr6;
+import com.spring.variation.domain.VariationBasicChr7;
+import com.spring.variation.domain.VariationBasicChr8;
+import com.spring.variation.domain.VariationBasicChr9;
+import com.spring.variation.domain.VariationBasicChrx;
+import com.spring.variation.domain.VariationDetailChr1;
+import com.spring.variation.domain.VariationDetailChr10;
+import com.spring.variation.domain.VariationDetailChr11;
+import com.spring.variation.domain.VariationDetailChr12;
+import com.spring.variation.domain.VariationDetailChr13;
+import com.spring.variation.domain.VariationDetailChr14;
+import com.spring.variation.domain.VariationDetailChr15;
+import com.spring.variation.domain.VariationDetailChr16;
+import com.spring.variation.domain.VariationDetailChr17;
+import com.spring.variation.domain.VariationDetailChr18;
+import com.spring.variation.domain.VariationDetailChr19;
+import com.spring.variation.domain.VariationDetailChr2;
+import com.spring.variation.domain.VariationDetailChr20;
+import com.spring.variation.domain.VariationDetailChr21;
+import com.spring.variation.domain.VariationDetailChr22;
+import com.spring.variation.domain.VariationDetailChr3;
+import com.spring.variation.domain.VariationDetailChr4;
+import com.spring.variation.domain.VariationDetailChr5;
+import com.spring.variation.domain.VariationDetailChr6;
+import com.spring.variation.domain.VariationDetailChr7;
+import com.spring.variation.domain.VariationDetailChr8;
+import com.spring.variation.domain.VariationDetailChr9;
+import com.spring.variation.domain.VariationDetailChrx;
 import com.spring.variation.service.VariationService;
 
 @RestController
@@ -152,9 +197,99 @@ public class VariationController {
 		int start = (int) Gene.get("start");
 		int end = (int) Gene.get("end");
 		int chrom = (int) Gene.get("chrom");
-    	List<VariationBasic> list = variationService.geneDataVarition(start, end, chrom);
+		if(chrom == 1) {
+			List<VariationBasicChr1> list = variationService.geneDataVarition1(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 2) {
+			List<VariationBasicChr2> list = variationService.geneDataVarition2(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 3) {
+			List<VariationBasicChr3> list = variationService.geneDataVarition3(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 4) {
+			List<VariationBasicChr4> list = variationService.geneDataVarition4(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 5) {
+			List<VariationBasicChr5> list = variationService.geneDataVarition5(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 6) {
+			List<VariationBasicChr6> list = variationService.geneDataVarition6(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 7) {
+			List<VariationBasicChr7> list = variationService.geneDataVarition7(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 9) {
+			List<VariationBasicChr8> list = variationService.geneDataVarition8(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 9) {
+			List<VariationBasicChr9> list = variationService.geneDataVarition9(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 10) {
+			List<VariationBasicChr10> list = variationService.geneDataVarition10(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 11) {
+			List<VariationBasicChr11> list = variationService.geneDataVarition11(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 12) {
+			List<VariationBasicChr12> list = variationService.geneDataVarition12(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 13) {
+			List<VariationBasicChr13> list = variationService.geneDataVarition13(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 14) {
+			List<VariationBasicChr14> list = variationService.geneDataVarition14(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 15) {
+			List<VariationBasicChr15> list = variationService.geneDataVarition15(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 16) {
+			List<VariationBasicChr16> list = variationService.geneDataVarition16(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 17) {
+			List<VariationBasicChr17> list = variationService.geneDataVarition17(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 18) {
+			List<VariationBasicChr18> list = variationService.geneDataVarition18(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 19) {
+			List<VariationBasicChr19> list = variationService.geneDataVarition19(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 20) {
+			List<VariationBasicChr20> list = variationService.geneDataVarition20(start, end, chrom);
+			map.put("variation", list);
+		}
+		else if(chrom == 21) {
+			List<VariationBasicChr21> list = variationService.geneDataVarition21(start, end, chrom);
+			map.put("variation", list);
+		}else if(chrom == 22) {
+			List<VariationBasicChr22> list = variationService.geneDataVarition22(start, end, chrom);
+			map.put("variation", list);
+		}else if(chrom == 23) {
+			List<VariationBasicChrx> list = variationService.geneDataVaritionx(start, end, "x");
+			map.put("variation", list);
+		}else {
+			map.put("variation", null);
+		}
     	List<Genomic> list2 = variationService.geneListGenomic(start, end, chrom);
-	    map.put("variation", list);
 	    map.put("genomic", list2);
 		return map;
 	}
@@ -166,6 +301,107 @@ public class VariationController {
     	List<Variation> list = variationService.variant(variantId);
     	map.put("type", "variant");
 	    map.put("listData", list);
+		return map;
+	}
+	
+	@RequestMapping("/variantDetail")
+	public Object variantDetail(@RequestBody Map<String,Object> Gene){
+		Map<String, Object> map = new HashMap();
+		String variantId = (String) Gene.get("variantId");
+		int chrom = Integer.parseInt(Gene.get("chrom").toString());
+		if(chrom == 1) {
+			List<VariationDetailChr1> list = variationService.variantDetail1(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 2) {
+			List<VariationDetailChr2> list = variationService.variantDetail2(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 3) {
+			List<VariationDetailChr3> list = variationService.variantDetail3(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 4) {
+			List<VariationDetailChr4> list = variationService.variantDetail4(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 5) {
+			List<VariationDetailChr5> list = variationService.variantDetail5(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 6) {
+			List<VariationDetailChr6> list = variationService.variantDetail6(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 7) {
+			List<VariationDetailChr7> list = variationService.variantDetail7(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 8) {
+			List<VariationDetailChr8> list = variationService.variantDetail8(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 9) {
+			List<VariationDetailChr9> list = variationService.variantDetail9(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 10) {
+			List<VariationDetailChr10> list = variationService.variantDetail10(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 11) {
+			List<VariationDetailChr11> list = variationService.variantDetail11(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 12) {
+			List<VariationDetailChr12> list = variationService.variantDetail12(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 13) {
+			List<VariationDetailChr13> list = variationService.variantDetail13(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 14) {
+			List<VariationDetailChr14> list = variationService.variantDetail14(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 15) {
+			List<VariationDetailChr15> list = variationService.variantDetail15(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 16) {
+			List<VariationDetailChr16> list = variationService.variantDetail16(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 17) {
+			List<VariationDetailChr17> list = variationService.variantDetail17(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 18) {
+			List<VariationDetailChr18> list = variationService.variantDetail18(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 19) {
+			List<VariationDetailChr19> list = variationService.variantDetail19(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 20) {
+			List<VariationDetailChr20> list = variationService.variantDetail20(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 21) {
+			List<VariationDetailChr21> list = variationService.variantDetail21(variantId,chrom);
+			map.put("listData", list);
+		}else if(chrom == 22) {
+			List<VariationDetailChr22> list = variationService.variantDetail22(variantId,chrom);
+			map.put("listData", list);
+		}else if(chrom == 23) {
+			List<VariationDetailChrx> list = variationService.variantDetailx(variantId,"x");
+			map.put("listData", list);
+		}else {
+			map.put("listData", null);
+		}
+    	map.put("type", "variant");
 		return map;
 	}
 	
