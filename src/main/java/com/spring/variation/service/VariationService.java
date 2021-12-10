@@ -132,4 +132,7 @@ public interface VariationService{
 	List<VariationDetailChr22> variantDetail22(String variantId, int chrom);
 	List<VariationDetailChrx> variantDetailx(String variantId, String string);
 	
+	//查询相关基因
+	List<Genomic> getRelateGene(String string);
+	
 }

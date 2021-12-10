@@ -55,6 +55,20 @@ public class VariationBasicChr12 implements Serializable {
     private String chn100k_ALL;
     @Column(name = "uu_id")
     private String uu_id;
+    @Column(name = "chn100k_NE")
+    private String chn100k_NE;
+    @Column(name = "chn100k_N")
+    private String chn100k_N;
+    @Column(name = "chn100k_E")
+    private String chn100k_E;
+    @Column(name = "chn100k_C")
+    private String chn100k_C;
+    @Column(name = "chn100k_NW")
+    private String chn100k_NW;
+    @Column(name = "chn100k_SW")
+    private String chn100k_SW;
+    @Column(name = "chn100k_S")
+    private String chn100k_S;
     
 	
 
@@ -304,13 +318,100 @@ public class VariationBasicChr12 implements Serializable {
 
 
 
+	public String getChn100k_NE() {
+		return chn100k_NE;
+	}
+
+
+
+	public void setChn100k_NE(String chn100k_NE) {
+		this.chn100k_NE = chn100k_NE;
+	}
+
+
+
+	public String getChn100k_N() {
+		return chn100k_N;
+	}
+
+
+
+	public void setChn100k_N(String chn100k_N) {
+		this.chn100k_N = chn100k_N;
+	}
+
+
+
+	public String getChn100k_E() {
+		return chn100k_E;
+	}
+
+
+
+	public void setChn100k_E(String chn100k_E) {
+		this.chn100k_E = chn100k_E;
+	}
+
+
+
+	public String getChn100k_C() {
+		return chn100k_C;
+	}
+
+
+
+	public void setChn100k_C(String chn100k_C) {
+		this.chn100k_C = chn100k_C;
+	}
+
+
+
+	public String getChn100k_NW() {
+		return chn100k_NW;
+	}
+
+
+
+	public void setChn100k_NW(String chn100k_NW) {
+		this.chn100k_NW = chn100k_NW;
+	}
+
+
+
+	public String getChn100k_SW() {
+		return chn100k_SW;
+	}
+
+
+
+	public void setChn100k_SW(String chn100k_SW) {
+		this.chn100k_SW = chn100k_SW;
+	}
+
+
+
+	public String getChn100k_S() {
+		return chn100k_S;
+	}
+
+
+
+	public void setChn100k_S(String chn100k_S) {
+		this.chn100k_S = chn100k_S;
+	}
+
+
+
+
 	@Override
 	public String toString() {
-		return "VariationBasic [Id=" + Id + ", Chrom=" + Chrom + ", Start=" + Start + ", End=" + End + ", Ref=" + Ref
-				+ ", Alt=" + Alt + ", VCF_CHROM=" + VCF_CHROM + ", VCF_POS=" + VCF_POS + ", VCF_REF=" + VCF_REF
+		return "VariationBasic [Id=" + Id + ", Chrom=" + Chrom + ", Start=" + Start + ", End=" + End + ", Ref="
+				+ Ref + ", Alt=" + Alt + ", VCF_CHROM=" + VCF_CHROM + ", VCF_POS=" + VCF_POS + ", VCF_REF=" + VCF_REF
 				+ ", VCF_ALT=" + VCF_ALT + ", RSID=" + RSID + ", Func=" + Func + ", Gene=" + Gene + ", GeneDetail="
 				+ GeneDetail + ", ExonicFunc=" + ExonicFunc + ", AAChange=" + AAChange + ", variation_type="
-				+ variation_type + ", AF=" + AF + ", chn100k_ALL=" + chn100k_ALL + ", uu_id=" + uu_id + "]";
+				+ variation_type + ", AF=" + AF + ", chn100k_ALL=" + chn100k_ALL + ", uu_id=" + uu_id + ", chn100k_NE="
+				+ chn100k_NE + ", chn100k_N=" + chn100k_N + ", chn100k_E=" + chn100k_E + ", chn100k_C=" + chn100k_C
+				+ ", chn100k_NW=" + chn100k_NW + ", chn100k_SW=" + chn100k_SW + ", chn100k_S=" + chn100k_S + "]";
 	}
 
 

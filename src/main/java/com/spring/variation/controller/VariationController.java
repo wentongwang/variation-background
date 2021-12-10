@@ -2,6 +2,7 @@ package com.spring.variation.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -197,6 +198,7 @@ public class VariationController {
 		int start = (int) Gene.get("start");
 		int end = (int) Gene.get("end");
 		int chrom = (int) Gene.get("chrom");
+		
 		if(chrom == 1) {
 			List<VariationBasicChr1> list = variationService.geneDataVarition1(start, end, chrom);
 			map.put("variation", list);
@@ -309,98 +311,133 @@ public class VariationController {
 		Map<String, Object> map = new HashMap();
 		String variantId = (String) Gene.get("variantId");
 		int chrom = Integer.parseInt(Gene.get("chrom").toString());
+		List<Genomic> relateList = new LinkedList<>();
+		String thisRelated = "";
 		if(chrom == 1) {
 			List<VariationDetailChr1> list = variationService.variantDetail1(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 2) {
 			List<VariationDetailChr2> list = variationService.variantDetail2(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 3) {
 			List<VariationDetailChr3> list = variationService.variantDetail3(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 4) {
 			List<VariationDetailChr4> list = variationService.variantDetail4(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 5) {
 			List<VariationDetailChr5> list = variationService.variantDetail5(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 6) {
 			List<VariationDetailChr6> list = variationService.variantDetail6(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 7) {
 			List<VariationDetailChr7> list = variationService.variantDetail7(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 8) {
 			List<VariationDetailChr8> list = variationService.variantDetail8(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 9) {
 			List<VariationDetailChr9> list = variationService.variantDetail9(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 10) {
 			List<VariationDetailChr10> list = variationService.variantDetail10(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 11) {
 			List<VariationDetailChr11> list = variationService.variantDetail11(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 12) {
 			List<VariationDetailChr12> list = variationService.variantDetail12(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 13) {
 			List<VariationDetailChr13> list = variationService.variantDetail13(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 14) {
 			List<VariationDetailChr14> list = variationService.variantDetail14(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 15) {
 			List<VariationDetailChr15> list = variationService.variantDetail15(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 16) {
 			List<VariationDetailChr16> list = variationService.variantDetail16(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 17) {
 			List<VariationDetailChr17> list = variationService.variantDetail17(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 18) {
 			List<VariationDetailChr18> list = variationService.variantDetail18(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 19) {
 			List<VariationDetailChr19> list = variationService.variantDetail19(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 20) {
 			List<VariationDetailChr20> list = variationService.variantDetail20(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}
 		else if(chrom == 21) {
 			List<VariationDetailChr21> list = variationService.variantDetail21(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}else if(chrom == 22) {
 			List<VariationDetailChr22> list = variationService.variantDetail22(variantId,chrom);
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}else if(chrom == 23) {
 			List<VariationDetailChrx> list = variationService.variantDetailx(variantId,"x");
+			thisRelated = (String)list.get(0).getRelated_gene();
 			map.put("listData", list);
 		}else {
 			map.put("listData", null);
+			thisRelated = null;
 		}
+		if(thisRelated != null && thisRelated.length() > 0) {
+			for(int i=0;i<thisRelated.split(";").length;i++){
+				if(!thisRelated.split(";")[i].equals("NONE")) {
+					relateList.add(variationService.getRelateGene(thisRelated.split(";")[i]).get(0));
+				}
+            }
+			
+		}
+		map.put("relateList", relateList);
     	map.put("type", "variant");
 		return map;
 	}

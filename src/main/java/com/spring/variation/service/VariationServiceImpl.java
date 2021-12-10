@@ -716,4 +716,15 @@ public class VariationServiceImpl implements VariationService {
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         });
     }
+    
+    @Override
+    public List<Genomic> getRelateGene(String geneName) {
+        return genomicRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+    		Predicate p1 = criteriaBuilder.equal(root.get("gene"),geneName);
+    		Predicate p2 = criteriaBuilder.equal(root.get("type"),"gene");
+    		predicates.add(criteriaBuilder.and(p1,p2));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
 }
