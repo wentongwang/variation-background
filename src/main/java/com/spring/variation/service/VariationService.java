@@ -53,6 +53,7 @@ import com.spring.variation.domain.VariationDetailChr7;
 import com.spring.variation.domain.VariationDetailChr8;
 import com.spring.variation.domain.VariationDetailChr9;
 import com.spring.variation.domain.VariationDetailChrx;
+import com.spring.variation.domain.VariationDetailsv;
 
 public interface VariationService{
 	Page<Variation> findByCondition(String chrom, String start, String end, String ref, String alt, String billion, String rsID,
@@ -107,6 +108,31 @@ public interface VariationService{
 	List<VariationBasicChr22> geneDataVarition22(int start, int end, int chrom);
 	List<VariationBasicChrx> geneDataVaritionx(int start, int end, String string);
 	
+	//查询Varition type=variat时
+	List<VariationBasicChr1> variant1(String variantId, int chrom);
+	List<VariationBasicChr2> variant2(String variantId, int chrom);
+	List<VariationBasicChr3> variant3(String variantId, int chrom);
+	List<VariationBasicChr4> variant4(String variantId, int chrom);
+	List<VariationBasicChr5> variant5(String variantId, int chrom);
+	List<VariationBasicChr6> variant6(String variantId, int chrom);
+	List<VariationBasicChr7> variant7(String variantId, int chrom);
+	List<VariationBasicChr8> variant8(String variantId, int chrom);
+	List<VariationBasicChr9> variant9(String variantId, int chrom);
+	List<VariationBasicChr10> variant10(String variantId, int chrom);
+	List<VariationBasicChr11> variant11(String variantId, int chrom);
+	List<VariationBasicChr12> variant12(String variantId, int chrom);
+	List<VariationBasicChr13> variant13(String variantId, int chrom);
+	List<VariationBasicChr14> variant14(String variantId, int chrom);
+	List<VariationBasicChr15> variant15(String variantId, int chrom);
+	List<VariationBasicChr16> variant16(String variantId, int chrom);
+	List<VariationBasicChr17> variant17(String variantId, int chrom);
+	List<VariationBasicChr18> variant18(String variantId, int chrom);
+	List<VariationBasicChr19> variant19(String variantId, int chrom);
+	List<VariationBasicChr20> variant20(String variantId, int chrom);
+	List<VariationBasicChr21> variant21(String variantId, int chrom);
+	List<VariationBasicChr22> variant22(String variantId, int chrom);
+	List<VariationBasicChrx> variant23(String variantId, String chrom);
+	
 	//根据id查询variantDetail
 	List<VariationDetailChr1> variantDetail1(String variantId, int chrom);
 	List<VariationDetailChr2> variantDetail2(String variantId, int chrom);
@@ -134,5 +160,8 @@ public interface VariationService{
 	
 	//查询相关基因
 	List<Genomic> getRelateGene(String string);
+	
+	//根据id查询svVariantDetail
+	List<VariationDetailsv> variantDetailsv(String variantId);
 	
 }

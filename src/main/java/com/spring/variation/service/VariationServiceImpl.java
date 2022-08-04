@@ -61,6 +61,7 @@ import com.spring.variation.dao.VariationDetailRepository6;
 import com.spring.variation.dao.VariationDetailRepository7;
 import com.spring.variation.dao.VariationDetailRepository8;
 import com.spring.variation.dao.VariationDetailRepository9;
+import com.spring.variation.dao.VariationDetailRepositorysv;
 import com.spring.variation.dao.VariationDetailRepositoryx;
 import com.spring.variation.domain.Genomic;
 import com.spring.variation.domain.User;
@@ -111,6 +112,7 @@ import com.spring.variation.domain.VariationDetailChr7;
 import com.spring.variation.domain.VariationDetailChr8;
 import com.spring.variation.domain.VariationDetailChr9;
 import com.spring.variation.domain.VariationDetailChrx;
+import com.spring.variation.domain.VariationDetailsv;
 
 @Service("VariationService")
 public class VariationServiceImpl implements VariationService {
@@ -212,6 +214,8 @@ public class VariationServiceImpl implements VariationService {
     private VariationDetailRepository22 variationDetailRepository22;
     @Autowired
     private VariationDetailRepositoryx variationDetailRepositoryx;
+    @Autowired
+    private VariationDetailRepositorysv variationDetailRepositorysv;
     @Override
     public Page<Variation> findByCondition(String chrom, String start, String end, String ref, String alt, String billion, String rsID,
 			String variation_type, String refSeq_genes, String exonic_function, String clinvar_id,
@@ -499,14 +503,213 @@ public class VariationServiceImpl implements VariationService {
     }
     
     @Override
-    public List<Variation> variant(String variantId) {
-        return variationRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+    public List<VariationBasicChr1> variant1(String variantId,int chrom) {
+        return variationBasicRepository1.findAll((root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<Predicate>();
             Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
     		predicates.add(criteriaBuilder.and(p1));
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         });
     }
+    @Override
+    public List<VariationBasicChr2> variant2(String variantId,int chrom) {
+        return variationBasicRepository2.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr3> variant3(String variantId,int chrom) {
+        return variationBasicRepository3.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr4> variant4(String variantId,int chrom) {
+        return variationBasicRepository4.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr5> variant5(String variantId,int chrom) {
+        return variationBasicRepository5.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr6> variant6(String variantId,int chrom) {
+        return variationBasicRepository6.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr7> variant7(String variantId,int chrom) {
+        return variationBasicRepository7.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr8> variant8(String variantId,int chrom) {
+        return variationBasicRepository8.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr9> variant9(String variantId,int chrom) {
+        return variationBasicRepository9.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr10> variant10(String variantId,int chrom) {
+        return variationBasicRepository10.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr11> variant11(String variantId,int chrom) {
+        return variationBasicRepository11.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr12> variant12(String variantId,int chrom) {
+        return variationBasicRepository12.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr13> variant13(String variantId,int chrom) {
+        return variationBasicRepository13.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr14> variant14(String variantId,int chrom) {
+        return variationBasicRepository14.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr15> variant15(String variantId,int chrom) {
+        return variationBasicRepository15.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr16> variant16(String variantId,int chrom) {
+        return variationBasicRepository16.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr17> variant17(String variantId,int chrom) {
+        return variationBasicRepository17.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr18> variant18(String variantId,int chrom) {
+        return variationBasicRepository18.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr19> variant19(String variantId,int chrom) {
+        return variationBasicRepository19.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr20> variant20(String variantId,int chrom) {
+        return variationBasicRepository20.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr21> variant21(String variantId,int chrom) {
+        return variationBasicRepository21.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChr22> variant22(String variantId,int chrom) {
+        return variationBasicRepository22.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    @Override
+    public List<VariationBasicChrx> variant23(String variantId,String chrom) {
+        return variationBasicRepositoryx.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    
     
     @Override
     public List<VariationDetailChr1> variantDetail1(String variantId,int chrom) {
@@ -723,7 +926,25 @@ public class VariationServiceImpl implements VariationService {
             List<Predicate> predicates = new ArrayList<Predicate>();
     		Predicate p1 = criteriaBuilder.equal(root.get("gene"),geneName);
     		Predicate p2 = criteriaBuilder.equal(root.get("type"),"gene");
-    		predicates.add(criteriaBuilder.and(p1,p2));
+    		Predicate p3 = criteriaBuilder.equal(root.get("type"),"pseudogene");
+    		predicates.add(criteriaBuilder.and(p1));
+    		predicates.add(criteriaBuilder.or(p2,p3));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+
+	@Override
+	public List<Variation> variant(String variantId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<VariationDetailsv> variantDetailsv(String variantId) {
+		return variationDetailRepositorysv.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         });
     }
