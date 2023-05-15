@@ -1,6 +1,4 @@
 package com.spring.variation.controller;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,14 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spring.variation.dao.VariationRepository;
+import com.spring.variation.domain.EmailCode;
 import com.spring.variation.domain.Genomic;
 import com.spring.variation.domain.User;
 import com.spring.variation.domain.Variation;
@@ -68,18 +64,25 @@ import com.spring.variation.domain.VariationDetailChr8;
 import com.spring.variation.domain.VariationDetailChr9;
 import com.spring.variation.domain.VariationDetailChrx;
 import com.spring.variation.domain.VariationDetailsv;
+import com.spring.variation.service.MailService;
 import com.spring.variation.service.VariationService;
+import com.spring.variation.utils.AesUtil;
+import com.spring.variation.utils.JwtToken;
+
+import net.sf.json.JSONArray;
 
 @RestController
 @RequestMapping("/")
-@CrossOrigin(origins = "*",maxAge = 3600)
+//@CrossOrigin(origins = "http://localhost:8080/",maxAge = 3600)
+//@CrossOrigin(origins = "http://172.18.0.1:8083/",maxAge = 3600)
 public class VariationController {
 
     @Autowired
     private VariationService variationService;
     
 	@RequestMapping("/variation")
-	public Object findByCondition(@RequestParam(value = "page", defaultValue = "0") Integer page,
+	public Object findByCondition(HttpServletRequest request,
+							@RequestParam(value = "page", defaultValue = "0") Integer page,
 	                        @RequestParam(value = "size", defaultValue = "10") Integer size,
 	                        @RequestParam(value = "chrom", defaultValue = "") String chrom,
 	                        @RequestParam(value = "start", defaultValue = "") String start,
@@ -131,7 +134,15 @@ public class VariationController {
 	                        @RequestParam(value = "uuId", defaultValue = "") String uuId,
 	                        @RequestParam(value = "gnomAD_exome_AMR", defaultValue = "") String gnomAD_exome_AMR
 	                        ){
-	     List<Variation> list = variationService.findByCondition(chrom, start, end, ref, alt, billion, rsID,
+			Map<String, Object> map = new HashMap();
+			Map<String, Object> res = new HashMap();
+			String token = request.getHeader("X-Token");
+			if(!JwtToken.checkToken(token)) {
+				res.put("code",100);
+				res.put("message","token不存在或已过期 ");
+				return res;
+			}
+			List<Variation> list = variationService.findByCondition(chrom, start, end, ref, alt, billion, rsID,
 	 			 variation_type, refSeq_genes, exonic_function, clinvar_id,
 				 disease_name_id, significance, oMIM_ID, gnomAD_exome_ALL,
 				 gnomAD_exome_AFR, gnomAD_exome_AMR, gnomAD_exome_ASJ, gnomAD_exome_EAS,
@@ -142,7 +153,6 @@ public class VariationController {
 				 gnomAD_genome_AMR, gnomAD_genome_ASJ, gnomAD_genome_EAS, gnomAD_genome_FIN,
 				 gnomAD_genome_NFE, gnomAD_genome_OTH, sIFT, polyPhenVal, gERP,
 				 cADD, uuId, page, size).getContent();
-	     Map<String, Object> map = new HashMap();
 	     map.put("num", list.size());
 	     map.put("listData", list);
 	
@@ -174,10 +184,17 @@ public class VariationController {
 //	}
 	
 	@RequestMapping("/search")
-	public Object findByCondition(@RequestBody Map<String,Object> Str,
+	public Object findByCondition(HttpServletRequest request,@RequestBody Map<String,Object> Str,
 							@RequestParam(value = "page", defaultValue = "0") Integer page,
 	                        @RequestParam(value = "size", defaultValue = "5") Integer size){
 		Map<String, Object> map = new HashMap();
+		Map<String, Object> res = new HashMap();
+		String token = request.getHeader("X-Token");
+		if(!JwtToken.checkToken(token)) {
+			res.put("code",100);
+			res.put("message","token不存在或已过期 ");
+			return res;
+		}
 		String str = (String) Str.get("str");
 		if (!StringUtils.isEmpty(str)){
 			List<Genomic> list = variationService.findByGenomic(str);
@@ -194,112 +211,131 @@ public class VariationController {
 	}
 	
 	@RequestMapping("/genePositionData")
-	public Object genePositionData(@RequestBody Map<String,Object> Gene){
+	public Object genePositionData(HttpServletRequest request,@RequestBody Map<String,Object> Gene){
 		Map<String, Object> map = new HashMap();
+		Map<String, Object> res = new HashMap();
+		String token = request.getHeader("X-Token");
+		if(!JwtToken.checkToken(token)) {
+			res.put("code",100);
+			res.put("message","token不存在或已过期 ");
+			return res;
+		}
 		int start = (int) Gene.get("start");
 		int end = (int) Gene.get("end");
 		int chrom = (int) Gene.get("chrom");
-		
+		String key = AesUtil.generateKeyAndIv();
+		JSONArray jsa = null;
 		if(chrom == 1) {
 			List<VariationBasicChr1> list = variationService.geneDataVarition1(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 2) {
 			List<VariationBasicChr2> list = variationService.geneDataVarition2(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 3) {
 			List<VariationBasicChr3> list = variationService.geneDataVarition3(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 4) {
 			List<VariationBasicChr4> list = variationService.geneDataVarition4(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 5) {
 			List<VariationBasicChr5> list = variationService.geneDataVarition5(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 6) {
 			List<VariationBasicChr6> list = variationService.geneDataVarition6(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 7) {
 			List<VariationBasicChr7> list = variationService.geneDataVarition7(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 9) {
 			List<VariationBasicChr8> list = variationService.geneDataVarition8(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 9) {
 			List<VariationBasicChr9> list = variationService.geneDataVarition9(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 10) {
 			List<VariationBasicChr10> list = variationService.geneDataVarition10(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 11) {
 			List<VariationBasicChr11> list = variationService.geneDataVarition11(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 12) {
 			List<VariationBasicChr12> list = variationService.geneDataVarition12(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 13) {
 			List<VariationBasicChr13> list = variationService.geneDataVarition13(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 14) {
 			List<VariationBasicChr14> list = variationService.geneDataVarition14(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 15) {
 			List<VariationBasicChr15> list = variationService.geneDataVarition15(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 16) {
 			List<VariationBasicChr16> list = variationService.geneDataVarition16(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 17) {
 			List<VariationBasicChr17> list = variationService.geneDataVarition17(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 18) {
 			List<VariationBasicChr18> list = variationService.geneDataVarition18(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 19) {
 			List<VariationBasicChr19> list = variationService.geneDataVarition19(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 20) {
 			List<VariationBasicChr20> list = variationService.geneDataVarition20(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 21) {
 			List<VariationBasicChr21> list = variationService.geneDataVarition21(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}else if(chrom == 22) {
 			List<VariationBasicChr22> list = variationService.geneDataVarition22(start, end, chrom);
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}else if(chrom == 23) {
 			List<VariationBasicChrx> list = variationService.geneDataVaritionx(start, end, "x");
-			map.put("variation", list);
+			jsa = JSONArray.fromObject(list);
 		}else {
-			map.put("variation", null);
+			jsa = null;
 		}
-    	List<Genomic> list2 = variationService.geneListGenomic(start, end, chrom);
+		List<Genomic> list2 = variationService.geneListGenomic(start, end, chrom);
+		String result = AesUtil.encrypt(jsa.toString(),key);
+		map.put("code", 200);
+		map.put("key", AesUtil.encrypt(key,"4t5dac4nhxz41e6u"));
+		map.put("variation",result);
 	    map.put("genomic", list2);
 		return map;
 	}
 	
 	@RequestMapping("/variant")
-	public Object variant(@RequestBody Map<String,Object> Gene){
+	public Object variant(HttpServletRequest request,@RequestBody Map<String,Object> Gene){
 		Map<String, Object> map = new HashMap();
+		Map<String, Object> res = new HashMap();
+		String token = request.getHeader("X-Token");
+		if(!JwtToken.checkToken(token)) {
+			res.put("code",100);
+			res.put("message","token不存在或已过期 ");
+			return res;
+		}
 		String variantId = (String) Gene.get("variantId");
 		int chrom = Integer.parseInt(Gene.get("chrom").toString());
     	if(chrom == 1) {
@@ -398,127 +434,243 @@ public class VariationController {
 		return map;
 	}
 	
-	@RequestMapping("/variantDetail")
-	public Object variantDetail(@RequestBody Map<String,Object> Gene){
+	@RequestMapping("/svVariant")
+	public Object svVariant(HttpServletRequest request,@RequestBody Map<String,Object> Gene){
 		Map<String, Object> map = new HashMap();
+		Map<String, Object> res = new HashMap();
+		String token = request.getHeader("X-Token");
+		if(!JwtToken.checkToken(token)) {
+			res.put("code",100);
+			res.put("message","token不存在或已过期 ");
+			return res;
+		}
+		String variantId = (String) Gene.get("variantId");
+		int chrom = Integer.parseInt(Gene.get("chrom").toString());
+    	if(chrom == 1) {
+			List<VariationBasicChr1> list = variationService.variant1(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 2) {
+			List<VariationBasicChr2> list = variationService.variant2(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 3) {
+			List<VariationBasicChr3> list = variationService.variant3(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 4) {
+			List<VariationBasicChr4> list = variationService.variant4(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 5) {
+			List<VariationBasicChr5> list = variationService.variant5(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 6) {
+			List<VariationBasicChr6> list = variationService.variant6(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 7) {
+			List<VariationBasicChr7> list = variationService.variant7(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 8) {
+			List<VariationBasicChr8> list = variationService.variant8(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 9) {
+			List<VariationBasicChr9> list = variationService.variant9(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 10) {
+			List<VariationBasicChr10> list = variationService.variant10(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 11) {
+			List<VariationBasicChr11> list = variationService.variant11(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 12) {
+			List<VariationBasicChr12> list = variationService.variant12(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 13) {
+			List<VariationBasicChr13> list = variationService.variant13(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 14) {
+			List<VariationBasicChr14> list = variationService.variant14(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 15) {
+			List<VariationBasicChr15> list = variationService.variant15(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 16) {
+			List<VariationBasicChr16> list = variationService.variant16(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 17) {
+			List<VariationBasicChr17> list = variationService.variant17(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 18) {
+			List<VariationBasicChr18> list = variationService.variant18(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 19) {
+			List<VariationBasicChr19> list = variationService.variant19(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 20) {
+			List<VariationBasicChr20> list = variationService.variant20(variantId,chrom);
+			map.put("listData", list);
+		}
+		else if(chrom == 21) {
+			List<VariationBasicChr21> list = variationService.variant21(variantId,chrom);
+			map.put("listData", list);
+		}else if(chrom == 22) {
+			List<VariationBasicChr22> list = variationService.variant22(variantId,chrom);
+			map.put("listData", list);
+		}else if(chrom == 23) {
+			List<VariationBasicChrx> list = variationService.variant23(variantId, "x");
+			map.put("listData", list);
+		}else {
+			map.put("listData", null);
+		}
+    	map.put("type", "svVariant");
+		return map;
+	}
+	
+	@RequestMapping("/variantDetail")
+	public Object variantDetail(HttpServletRequest request,@RequestBody Map<String,Object> Gene){
+		Map<String, Object> map = new HashMap();
+		Map<String, Object> res = new HashMap();
+		String token = request.getHeader("X-Token");
+		if(!JwtToken.checkToken(token)) {
+			res.put("code",100);
+			res.put("message","token不存在或已过期 ");
+			return res;
+		}
 		String variantId = (String) Gene.get("variantId");
 		int chrom = Integer.parseInt(Gene.get("chrom").toString());
 		List<Genomic> relateList = new LinkedList<>();
 		String thisRelated = "";
+		String key = AesUtil.generateKeyAndIv();
+		JSONArray jsa = null;
 		if(chrom == 1) {
 			List<VariationDetailChr1> list = variationService.variantDetail1(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 2) {
 			List<VariationDetailChr2> list = variationService.variantDetail2(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 3) {
 			List<VariationDetailChr3> list = variationService.variantDetail3(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 4) {
 			List<VariationDetailChr4> list = variationService.variantDetail4(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 5) {
 			List<VariationDetailChr5> list = variationService.variantDetail5(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 6) {
 			List<VariationDetailChr6> list = variationService.variantDetail6(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 7) {
 			List<VariationDetailChr7> list = variationService.variantDetail7(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 8) {
 			List<VariationDetailChr8> list = variationService.variantDetail8(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 9) {
 			List<VariationDetailChr9> list = variationService.variantDetail9(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 10) {
 			List<VariationDetailChr10> list = variationService.variantDetail10(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 11) {
 			List<VariationDetailChr11> list = variationService.variantDetail11(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 12) {
 			List<VariationDetailChr12> list = variationService.variantDetail12(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 13) {
 			List<VariationDetailChr13> list = variationService.variantDetail13(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 14) {
 			List<VariationDetailChr14> list = variationService.variantDetail14(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 15) {
 			List<VariationDetailChr15> list = variationService.variantDetail15(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 16) {
 			List<VariationDetailChr16> list = variationService.variantDetail16(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 17) {
 			List<VariationDetailChr17> list = variationService.variantDetail17(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 18) {
 			List<VariationDetailChr18> list = variationService.variantDetail18(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 19) {
 			List<VariationDetailChr19> list = variationService.variantDetail19(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 20) {
 			List<VariationDetailChr20> list = variationService.variantDetail20(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}
 		else if(chrom == 21) {
 			List<VariationDetailChr21> list = variationService.variantDetail21(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}else if(chrom == 22) {
 			List<VariationDetailChr22> list = variationService.variantDetail22(variantId,chrom);
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}else if(chrom == 23) {
 			List<VariationDetailChrx> list = variationService.variantDetailx(variantId,"x");
 			thisRelated = (String)list.get(0).getRelated_gene();
-			map.put("listData", list);
+			jsa = JSONArray.fromObject(list);
 		}else {
-			map.put("listData", null);
 			thisRelated = null;
 		}
 		if(thisRelated != null && thisRelated.length() > 0) {
@@ -529,6 +681,9 @@ public class VariationController {
             }
 			
 		}
+		String result = AesUtil.encrypt(jsa.toString(),key);
+		map.put("listData", result);
+		map.put("key", AesUtil.encrypt(key,"4t5dac4nhxz41e6u"));
 		map.put("relateList", relateList);
     	map.put("type", "variant");
 		return map;
@@ -536,13 +691,24 @@ public class VariationController {
 	
 	
 	@RequestMapping("/svVariantDetail")
-	public Object svVariantDetail(@RequestBody Map<String,Object> Gene){
+	public Object svVariantDetail(HttpServletRequest request,@RequestBody Map<String,Object> Gene){
 		Map<String, Object> map = new HashMap();
+		Map<String, Object> res = new HashMap();
+		String token = request.getHeader("X-Token");
+		if(!JwtToken.checkToken(token)) {
+			res.put("code",100);
+			res.put("message","token不存在或已过期 ");
+			return res;
+		}
 		String variantId = (String) Gene.get("variantId");
 		List<VariationDetailsv> list = variationService.variantDetailsv(variantId);
 		if (!list.isEmpty()){
+			String key = AesUtil.generateKeyAndIv();
+			JSONArray jsa = JSONArray.fromObject(list);
+			String result = AesUtil.encrypt(jsa.toString(),key);
 			map.put("code", 200);
-			map.put("listData", list);
+			map.put("key", AesUtil.encrypt(key,"4t5dac4nhxz41e6u"));
+			map.put("listData",result);
 			map.put("type", "svVariant");
         }else{
         	map.put("code", 500);
@@ -559,7 +725,8 @@ public class VariationController {
 		List<User> list = variationService.login(userName, passWord);
 		if (!list.isEmpty()){
 			map.put("code", 200);
-			map.put("token", list.get(0).getName());
+			map.put("userName", list.get(0).getName());
+			map.put("token", JwtToken.createToken(list.get(0).getName(),list.get(0).getRole()));
         }else{
         	map.put("code", 500);
         }
@@ -567,12 +734,18 @@ public class VariationController {
 	}
 	
 	@RequestMapping("/getInfo")
-	public Object getInfo(@RequestBody Map<String,Object> User){
+	public Object getInfo(HttpServletRequest request,@RequestBody Map<String,Object> User){
 		Map<String, Object> map = new HashMap();
 		Map<String, Object> res = new HashMap();
+		String token = request.getHeader("X-Token");
+		if(!JwtToken.checkToken(token)) {
+			res.put("code",100);
+			res.put("message","token不存在或已过期 ");
+			return res;
+		}
 		String userName = (String) User.get("username");
 		List<User> list = variationService.getInfo(userName);
-		System.out.println(list);
+//		System.out.println(list);
 		if (!list.isEmpty()){
 			map.put("roles", list.get(0).getRole());
 		    map.put("name", list.get(0).getName());
@@ -580,4 +753,51 @@ public class VariationController {
     	res.put("data",map);
 		return res;
 	}
+	
+	@Autowired
+    MailService mailService;
+	@RequestMapping("/register")
+	public Map<String, Object> register(@RequestBody Map<String,String> map) {
+		Map<String, Object> res = new HashMap();
+		try {
+			String email = map.get("email");
+			String principalType = map.get("principalType");
+			String applicationPurpose = map.get("applicationPurpose");
+			String IDCardName = map.get("IDCardName");
+			String IDCardNo = map.get("IDCardNo");
+			String emailCode = map.get("emailCode");
+			List<EmailCode> list = variationService.findEmailCode(email);
+			if (!list.isEmpty()){
+				if(list.get(list.size() - 1).getCode().equals(emailCode)) {
+					res.put("code", 200);
+					String message = "申请人邮箱：" + email + "\r\n" + "申请主体类型：" + principalType + "\r\n"+ "申请人姓名：" + IDCardName + "\r\n"+ "申请人身份证号码：" + IDCardNo + "\r\n" + "申请账号用途：" + applicationPurpose + "\r\n";
+			        mailService.sendSimpleMail("h100kgp@163.com","hit100kgp@163.com","中国人群多组学参比数据库账号申请",message);
+				}else {
+					res.put("code", 201);
+				}
+			}else {
+				res.put("code", 400);
+			}
+			return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+			res.put("code", 500);
+			return res;
+		}
+    }
+	
+	@RequestMapping("/sendCode")
+	public String sendCode(@RequestBody EmailCode newEmailCode) {
+		try {
+			String email = newEmailCode.getEmail();
+	        String code = (Math.random()+"").substring(2,8);
+	        newEmailCode.setCode(code);
+	        variationService.addEmailCode(newEmailCode);
+	        mailService.sendSimpleMail("h100kgp@163.com",email,"中国人群多组学参比数据库账号申请验证码",code);
+			return code;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+    }
 }

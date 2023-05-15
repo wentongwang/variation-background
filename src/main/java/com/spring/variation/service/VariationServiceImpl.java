@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
+import com.spring.variation.dao.EmailCodeRepository;
 import com.spring.variation.dao.GenomicRepository;
 import com.spring.variation.dao.UserRepository;
 import com.spring.variation.dao.VariationBasicRepository1;
@@ -63,6 +64,7 @@ import com.spring.variation.dao.VariationDetailRepository8;
 import com.spring.variation.dao.VariationDetailRepository9;
 import com.spring.variation.dao.VariationDetailRepositorysv;
 import com.spring.variation.dao.VariationDetailRepositoryx;
+import com.spring.variation.domain.EmailCode;
 import com.spring.variation.domain.Genomic;
 import com.spring.variation.domain.User;
 import com.spring.variation.domain.Variation;
@@ -116,6 +118,8 @@ import com.spring.variation.domain.VariationDetailsv;
 
 @Service("VariationService")
 public class VariationServiceImpl implements VariationService {
+	@Autowired
+    private EmailCodeRepository EmailCodeRepository;
     @Autowired
     private VariationRepository variationRepository;
     @Autowired
@@ -944,6 +948,21 @@ public class VariationServiceImpl implements VariationService {
 		return variationDetailRepositorysv.findAll((root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<Predicate>();
             Predicate p1 = criteriaBuilder.equal(root.get("uu_id"),variantId);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+	
+	@Override
+	public void addEmailCode(EmailCode emailcode) {
+		EmailCodeRepository.save(emailcode);
+    }
+	
+	@Override
+	public List<EmailCode> findEmailCode(String email) {
+		return EmailCodeRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("email"),email);
     		predicates.add(criteriaBuilder.and(p1));
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         });

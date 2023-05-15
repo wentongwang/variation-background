@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.spring.variation.domain.EmailCode;
 import com.spring.variation.domain.Genomic;
 import com.spring.variation.domain.User;
 import com.spring.variation.domain.Variation;
@@ -163,5 +164,11 @@ public interface VariationService{
 	
 	//根据id查询svVariantDetail
 	List<VariationDetailsv> variantDetailsv(String variantId);
+	
+	//增加验证码表中数据
+	void addEmailCode(EmailCode emailcode);
+	
+	//查询验证码
+	List<EmailCode> findEmailCode(String email);
 	
 }

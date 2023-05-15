@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>variation</artifactId>
-	<version>0.0.2.2-SNAPSHOT</version>
+	<version>0.0.2.3-SNAPSHOT</version>
 	<name>variation</name>
 	<packaging>war</packaging>
 
@@ -56,6 +56,25 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
+        <dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+           <groupId>io.jsonwebtoken</groupId>
+           <artifactId>jjwt</artifactId>
+           <version>0.9.1</version>
+       </dependency>
+       <dependency>
+           <groupId>cn.hutool</groupId>
+           <artifactId>hutool-all</artifactId>
+           <version>5.7.20</version>
+       </dependency>
+       <dependency>
+	      <groupId>net.sf.json-lib</groupId>
+	      <artifactId>json-lib</artifactId>
+	      <version>0.9</version>
+		</dependency>
 	</dependencies>
 
 	<build>
