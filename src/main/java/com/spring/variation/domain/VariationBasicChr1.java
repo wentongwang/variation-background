@@ -49,8 +49,6 @@ public class VariationBasicChr1 implements Serializable {
     private String AAChange;
     @Column(name = "variation_type")
     private String variation_type;
-    @Column(name = "AF")
-    private String AF;
     @Column(name = "chn100k_ALL")
     private String chn100k_ALL;
     @Column(name = "uu_id")
@@ -69,8 +67,21 @@ public class VariationBasicChr1 implements Serializable {
     private String chn100k_SW;
     @Column(name = "chn100k_S")
     private String chn100k_S;
-    
-	
+    @Column(name = "AF")
+    private String AF;
+
+
+	public String getAF() {
+		return AF;
+	}
+
+
+
+	public void setAF(String aF) {
+		AF = aF;
+	}
+
+
 
 	public int getId() {
 		return Id;
@@ -276,18 +287,6 @@ public class VariationBasicChr1 implements Serializable {
 
 
 
-	public String getAF() {
-		return AF;
-	}
-
-
-
-	public void setAF(String aF) {
-		AF = aF;
-	}
-
-
-
 	public String getChn100k_ALL() {
 		return chn100k_ALL;
 	}
@@ -402,16 +401,15 @@ public class VariationBasicChr1 implements Serializable {
 
 
 
-
 	@Override
 	public String toString() {
-		return "VariationBasic [Id=" + Id + ", Chrom=" + Chrom + ", Start=" + Start + ", End=" + End + ", Ref="
+		return "VariationBasicChr1 [Id=" + Id + ", Chrom=" + Chrom + ", Start=" + Start + ", End=" + End + ", Ref="
 				+ Ref + ", Alt=" + Alt + ", VCF_CHROM=" + VCF_CHROM + ", VCF_POS=" + VCF_POS + ", VCF_REF=" + VCF_REF
 				+ ", VCF_ALT=" + VCF_ALT + ", RSID=" + RSID + ", Func=" + Func + ", Gene=" + Gene + ", GeneDetail="
 				+ GeneDetail + ", ExonicFunc=" + ExonicFunc + ", AAChange=" + AAChange + ", variation_type="
-				+ variation_type + ", AF=" + AF + ", chn100k_ALL=" + chn100k_ALL + ", uu_id=" + uu_id + ", chn100k_NE="
-				+ chn100k_NE + ", chn100k_N=" + chn100k_N + ", chn100k_E=" + chn100k_E + ", chn100k_C=" + chn100k_C
-				+ ", chn100k_NW=" + chn100k_NW + ", chn100k_SW=" + chn100k_SW + ", chn100k_S=" + chn100k_S + "]";
+				+ variation_type + ", chn100k_ALL=" + chn100k_ALL + ", uu_id=" + uu_id + ", chn100k_NE=" + chn100k_NE
+				+ ", chn100k_N=" + chn100k_N + ", chn100k_E=" + chn100k_E + ", chn100k_C=" + chn100k_C + ", chn100k_NW="
+				+ chn100k_NW + ", chn100k_SW=" + chn100k_SW + ", chn100k_S=" + chn100k_S + ", AF=" + AF + "]";
 	}
 
 

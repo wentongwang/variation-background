@@ -2,6 +2,7 @@ package com.spring.variation.service;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -9,12 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
+import com.spring.variation.dao.AdminUserRepository;
 import com.spring.variation.dao.EmailCodeRepository;
 import com.spring.variation.dao.GenomicRepository;
+import com.spring.variation.dao.RejectUserRepository;
 import com.spring.variation.dao.UserRepository;
 import com.spring.variation.dao.VariationBasicRepository1;
 import com.spring.variation.dao.VariationBasicRepository10;
@@ -64,8 +68,10 @@ import com.spring.variation.dao.VariationDetailRepository8;
 import com.spring.variation.dao.VariationDetailRepository9;
 import com.spring.variation.dao.VariationDetailRepositorysv;
 import com.spring.variation.dao.VariationDetailRepositoryx;
+import com.spring.variation.domain.AdminUser;
 import com.spring.variation.domain.EmailCode;
 import com.spring.variation.domain.Genomic;
+import com.spring.variation.domain.RejectUser;
 import com.spring.variation.domain.User;
 import com.spring.variation.domain.Variation;
 import com.spring.variation.domain.VariationBasicChr1;
@@ -126,6 +132,10 @@ public class VariationServiceImpl implements VariationService {
     private GenomicRepository genomicRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RejectUserRepository rejectUserRepository;
+    @Autowired
+    private AdminUserRepository adminUserRepository;
     @Autowired
     private VariationBasicRepository1 variationBasicRepository1;
     @Autowired
@@ -906,7 +916,18 @@ public class VariationServiceImpl implements VariationService {
         return userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<Predicate>();
             String md5Password = DigestUtils.md5DigestAsHex(passWord.getBytes());
-            System.out.println(md5Password);
+            Predicate p1 = criteriaBuilder.equal(root.get("name"),userName);
+            Predicate p2 = criteriaBuilder.equal(root.get("password"),md5Password);
+    		predicates.add(criteriaBuilder.and(p1,p2));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    
+    @Override
+    public List<AdminUser> adminLogin(String userName, String passWord) {
+        return adminUserRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            String md5Password = DigestUtils.md5DigestAsHex(passWord.getBytes());
             Predicate p1 = criteriaBuilder.equal(root.get("name"),userName);
             Predicate p2 = criteriaBuilder.equal(root.get("password"),md5Password);
     		predicates.add(criteriaBuilder.and(p1,p2));
@@ -919,6 +940,16 @@ public class VariationServiceImpl implements VariationService {
         return userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<Predicate>();
             Predicate p1 = criteriaBuilder.equal(root.get("name"),userName);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+    
+    @Override
+    public List<AdminUser> getAdminInfo(String userName) {
+        return adminUserRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("real_name"),userName);
     		predicates.add(criteriaBuilder.and(p1));
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         });
@@ -959,6 +990,26 @@ public class VariationServiceImpl implements VariationService {
     }
 	
 	@Override
+	public List<User> isReregisted(String email) {
+		return userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("email"),email);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+	
+	@Override
+	public List<User> usernameIsReregisted(String name) {
+		return userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.equal(root.get("name"),name);
+    		predicates.add(criteriaBuilder.and(p1));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        });
+    }
+	
+	@Override
 	public List<EmailCode> findEmailCode(String email) {
 		return EmailCodeRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<Predicate>();
@@ -966,5 +1017,87 @@ public class VariationServiceImpl implements VariationService {
     		predicates.add(criteriaBuilder.and(p1));
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         });
+    }
+	
+	@Override
+    public Page<User> findUserByCondition(Integer page, Integer size, String search) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            Predicate p1 = criteriaBuilder.like(root.get("email"),"%"+search+"%");
+            Predicate p2 = criteriaBuilder.like(root.get("card_name"),"%"+search+"%");
+            Predicate p3 = criteriaBuilder.like(root.get("card_no"),"%"+search+"%");
+            Predicate p4 = criteriaBuilder.isNotNull(root.get("name"));
+            predicates.add(criteriaBuilder.or(p1,p2,p3));
+            predicates.add(criteriaBuilder.and(p4));
+            return criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()])).getRestriction();
+        },pageable);
+    }
+	
+	@Override
+	public void addUser(User user) {
+		userRepository.save(user);
+    }
+	
+	@Override
+	public void addRejectUser(RejectUser rejectUser) {
+		rejectUserRepository.save(rejectUser);
+    }
+	
+	@Override
+    public User userAdopt(String adminName, Integer userId) {
+			Date reviewTime = new Date();
+			User oldUser = userRepository.findById(userId);
+			oldUser.setReview_name(adminName);
+			oldUser.setStatus(1);
+			oldUser.setReview_time(reviewTime);
+			userRepository.save(oldUser);
+			return userRepository.findById(userId);
+    }
+	
+	@Override
+    public User userReject(String adminName, Integer userId) {
+			Date reviewTime = new Date();
+			User oldUser = userRepository.findById(userId);
+			oldUser.setReview_name(adminName);
+			oldUser.setStatus(2);
+			oldUser.setReview_time(reviewTime);
+			userRepository.save(oldUser);
+			return userRepository.findById(userId);
+    }
+	
+	@Override
+    public User userBan(String adminName, Integer userId) {
+			Date reviewTime = new Date();
+			User oldUser = userRepository.findById(userId);
+			oldUser.setReview_name(adminName);
+			oldUser.setStatus(3);
+			oldUser.setReview_time(reviewTime);
+			userRepository.save(oldUser);
+			return userRepository.findById(userId);
+    }
+	
+	@Override
+    public User userLift(String adminName, Integer userId) {
+			Date reviewTime = new Date();
+			User oldUser = userRepository.findById(userId);
+			oldUser.setReview_name(adminName);
+			oldUser.setStatus(1);
+			oldUser.setReview_time(reviewTime);
+			userRepository.save(oldUser);
+			return userRepository.findById(userId);
+    }
+	
+	@Override
+    public User forgot(Integer userId, String md5Password) {
+			User oldUser = userRepository.findById(userId);
+			oldUser.setPassword(md5Password);
+			userRepository.save(oldUser);
+			return userRepository.findById(userId);
+    }
+	
+	@Override
+    public void userDelete(Integer userId) {
+			userRepository.deleteById(userId);
     }
 }

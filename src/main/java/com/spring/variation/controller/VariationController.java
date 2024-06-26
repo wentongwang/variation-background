@@ -1,12 +1,17 @@
 package com.spring.variation.controller;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.variation.domain.EmailCode;
 import com.spring.variation.domain.Genomic;
+import com.spring.variation.domain.RejectUser;
 import com.spring.variation.domain.User;
+import com.spring.variation.domain.AdminUser;
 import com.spring.variation.domain.Variation;
 import com.spring.variation.domain.VariationBasicChr1;
 import com.spring.variation.domain.VariationBasicChr10;
@@ -223,8 +230,17 @@ public class VariationController {
 		int start = (int) Gene.get("start");
 		int end = (int) Gene.get("end");
 		int chrom = (int) Gene.get("chrom");
+		String result = null;
 		String key = AesUtil.generateKeyAndIv();
 		JSONArray jsa = null;
+		List<Genomic> list2 = variationService.geneListGenomic(start, end, chrom);
+		if(end - start > 500000) {
+			map.put("code", 200);
+			map.put("key", AesUtil.encrypt(key,"4t5dac4nhxz41e6u"));
+			map.put("variation",result);
+		    map.put("genomic", list2);
+		    return map;
+		}
 		if(chrom == 1) {
 			List<VariationBasicChr1> list = variationService.geneDataVarition1(start, end, chrom);
 			jsa = JSONArray.fromObject(list);
@@ -317,8 +333,7 @@ public class VariationController {
 		}else {
 			jsa = null;
 		}
-		List<Genomic> list2 = variationService.geneListGenomic(start, end, chrom);
-		String result = AesUtil.encrypt(jsa.toString(),key);
+		result = AesUtil.encrypt(jsa.toString(),key);
 		map.put("code", 200);
 		map.put("key", AesUtil.encrypt(key,"4t5dac4nhxz41e6u"));
 		map.put("variation",result);
@@ -726,6 +741,25 @@ public class VariationController {
 		if (!list.isEmpty()){
 			map.put("code", 200);
 			map.put("userName", list.get(0).getName());
+			map.put("status", list.get(0).getStatus());
+			map.put("token", JwtToken.createToken(list.get(0).getName(),list.get(0).getRole()));
+        }else{
+        	map.put("code", 500);
+        }
+		return map;
+	}
+	
+	@RequestMapping("/adminLogin")
+	public Object adminLogin(@RequestBody Map<String,Object> AdminUser){
+		Map<String, Object> map = new HashMap();
+		String userName = (String) AdminUser.get("username");
+		String passWord = (String) AdminUser.get("password");
+		System.out.println(userName);
+		List<AdminUser> list = variationService.adminLogin(userName, passWord);
+		if (!list.isEmpty()){
+			map.put("code", 200);
+			map.put("userName", list.get(0).getName());
+			map.put("realName", list.get(0).getReal_name());
 			map.put("token", JwtToken.createToken(list.get(0).getName(),list.get(0).getRole()));
         }else{
         	map.put("code", 500);
@@ -760,18 +794,43 @@ public class VariationController {
 	public Map<String, Object> register(@RequestBody Map<String,String> map) {
 		Map<String, Object> res = new HashMap();
 		try {
+			String name = map.get("username");
 			String email = map.get("email");
+			String password = map.get("password");
+			String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
+			String role = "admin";
 			String principalType = map.get("principalType");
 			String applicationPurpose = map.get("applicationPurpose");
 			String IDCardName = map.get("IDCardName");
 			String IDCardNo = map.get("IDCardNo");
 			String emailCode = map.get("emailCode");
+			String from1 = "chnpop";
+			Date registrationTime = new Date();
+			List<User> list2 = variationService.usernameIsReregisted(name);
+			if (!list2.isEmpty()){
+				res.put("code", 202);
+				return res;
+			}
 			List<EmailCode> list = variationService.findEmailCode(email);
 			if (!list.isEmpty()){
 				if(list.get(list.size() - 1).getCode().equals(emailCode)) {
+					User user = new User();
+					user.setName(name);
+					user.setPassword(md5Password);
+					user.setRole(role);
+					user.setStatus(1);
+					user.setEmail(email);
+					user.setPrincipal_type(principalType);
+					user.setApplication_purpose(applicationPurpose);
+					user.setCard_name(IDCardName);
+					user.setCard_no(IDCardNo);
+					user.setRegistration_time(registrationTime);
+					user.setFrom1(from1);
+					variationService.addUser(user);
 					res.put("code", 200);
-					String message = "申请人邮箱：" + email + "\r\n" + "申请主体类型：" + principalType + "\r\n"+ "申请人姓名：" + IDCardName + "\r\n"+ "申请人身份证号码：" + IDCardNo + "\r\n" + "申请账号用途：" + applicationPurpose + "\r\n";
-			        mailService.sendSimpleMail("h100kgp@163.com","hit100kgp@163.com","中国人群多组学参比数据库账号申请",message);
+					
+//					String message = "有新的账号申请" + "\r\n" + "申请人邮箱：" + email + "\r\n" + "申请主体类型：" + principalType + "\r\n"+ "申请人姓名：" + IDCardName + "\r\n"+ "申请人身份证号码：" + IDCardNo + "\r\n" + "申请账号用途：" + applicationPurpose + "\r\n";
+//			        mailService.sendSimpleMail("h100kgp@163.com","tjiang@hit.edu.cn","中国人群多组学参比数据库",message);
 				}else {
 					res.put("code", 201);
 				}
@@ -786,18 +845,275 @@ public class VariationController {
 		}
     }
 	
-	@RequestMapping("/sendCode")
-	public String sendCode(@RequestBody EmailCode newEmailCode) {
+	@RequestMapping("/forgot")
+	public Map<String, Object> forgot(@RequestBody Map<String,String> map) {
+		Map<String, Object> res = new HashMap();
+		try {
+			String email = map.get("email");
+			String password = map.get("password");
+			String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
+			String emailCode = map.get("emailCode");
+			List<EmailCode> list = variationService.findEmailCode(email);
+			if (!list.isEmpty()){
+				if(list.get(list.size() - 1).getCode().equals(emailCode)) {
+					List<User> user = variationService.getInfo(email);
+					if(user.size() > 0) {
+						Integer userId = user.get(0).getId();
+						User list2 = variationService.forgot(userId, md5Password);
+						res.put("code", 200);
+					}else {
+						res.put("code", 300);
+					}
+//					String message = "申请人邮箱：" + email + "\r\n" + "申请主体类型：" + principalType + "\r\n"+ "申请人姓名：" + IDCardName + "\r\n"+ "申请人身份证号码：" + IDCardNo + "\r\n" + "申请账号用途：" + applicationPurpose + "\r\n";
+//			        mailService.sendSimpleMail("h100kgp@163.com","hit100kgp@163.com","中国人群多组学参比数据库账号申请",message);
+				}else {
+					res.put("code", 201);
+				}
+			}else {
+				res.put("code", 400);
+			}
+			return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+			res.put("code", 500);
+			return res;
+		}
+    }
+	
+	@RequestMapping("/forgotSendCode")
+	public Map<String, Object> forgotSendCode(@RequestBody EmailCode newEmailCode) {
+		Map<String, Object> res = new HashMap();
 		try {
 			String email = newEmailCode.getEmail();
-	        String code = (Math.random()+"").substring(2,8);
-	        newEmailCode.setCode(code);
-	        variationService.addEmailCode(newEmailCode);
-	        mailService.sendSimpleMail("h100kgp@163.com",email,"中国人群多组学参比数据库账号申请验证码",code);
-			return code;
+			List<User> list = variationService.isReregisted(email);
+			if (!list.isEmpty()){
+				String code = (Math.random()+"").substring(2,8);
+		        newEmailCode.setCode(code);
+		        variationService.addEmailCode(newEmailCode);
+		        mailService.sendSimpleMail("h100kgp@163.com",email,"中国人群多组学参比数据库账号申请验证码","欢迎注册中国人群多组学参比数据库用户，您的验证码为：" + code + "(为确保您的账户安全，请在2小时内完成验证)");
+		        res.put("code", 200);
+		        res.put("emailCode", code);
+			}
+			else{
+				res.put("code", 201);
+			}
+			return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+			res.put("code", 500);
+			return res;
+		}
+    }
+	
+	@RequestMapping("/sendCode")
+	public Map<String, Object> sendCode(@RequestBody EmailCode newEmailCode) {
+		Map<String, Object> res = new HashMap();
+		try {
+			String email = newEmailCode.getEmail();
+			List<User> list = variationService.isReregisted(email);
+			if (list.isEmpty()){
+				String code = (Math.random()+"").substring(2,8);
+		        newEmailCode.setCode(code);
+		        variationService.addEmailCode(newEmailCode);
+		        mailService.sendSimpleMail("h100kgp@163.com",email,"中国人群多组学参比数据库账号申请验证码","欢迎注册中国人群多组学参比数据库用户，您的验证码为：" + code + "(为确保您的账户安全，请在2小时内完成验证)");
+		        res.put("code", 200);
+		        res.put("emailCode", code);
+			}
+			else{
+				res.put("code", 201);
+			}
+			return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+			res.put("code", 500);
+			return res;
+		}
+    }
+	
+	@RequestMapping("/getUserList")
+	public Object findUserByCondition(@RequestBody Map<String,String> map){
+		Map<String, Object> res = new HashMap();
+		Integer page = Integer.parseInt(map.get("page"));
+		Integer size = Integer.parseInt(map.get("size"));
+		String search = map.get("search");
+		String adminName = map.get("adminName");
+		List<AdminUser> adminUserList = variationService.getAdminInfo(adminName);
+		if (adminUserList.isEmpty()){
+			res.put("code", 205);
+		    return res;
+		}
+		Page<User> userList = variationService.findUserByCondition(page, size, search);
+		List<User> list = userList.getContent();
+		res.put("code", 200);
+		res.put("num", userList.getTotalPages());
+		res.put("listData", list);
+	
+	    return res;
+	}
+	
+	@RequestMapping("/userAdopt")
+	public Object userAdopt(@RequestBody Map<String,String> map){
+		try {
+			Map<String, Object> res = new HashMap();
+			String adminName = map.get("adminName");
+			Integer userId = Integer.parseInt(map.get("userId"));
+//			String password = generateRandomString(12);
+			List<AdminUser> adminUserList = variationService.getAdminInfo(adminName);
+			if (adminUserList.isEmpty()){
+				res.put("code", 205);
+			    return res;
+			}
+			User list = variationService.userAdopt(adminName, userId);
+			String email = list.getEmail();
+	        mailService.sendSimpleMail("h100kgp@163.com",email,"欢迎使用中国人群多组学参比数据库","欢迎使用中国人群多组学参比数据库：您的账号申请已经审核通过。");
+	        res.put("userData", list);
+			res.put("code", 200);
+		    return res;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "error";
 		}
+		
+	}
+	
+	@RequestMapping("/userReject")
+	public Object userReject(@RequestBody Map<String,String> map){
+		try {
+			Map<String, Object> res = new HashMap();
+			String adminName = map.get("adminName");
+			String message = map.get("message");
+			Integer userId = Integer.parseInt(map.get("userId"));
+			User user = variationService.userReject(adminName, userId);
+			List<AdminUser> adminUserList = variationService.getAdminInfo(adminName);
+			if (adminUserList.isEmpty()){
+				res.put("code", 205);
+			    return res;
+			}
+			RejectUser rejectUser = new RejectUser();
+			rejectUser.setId(user.getId());
+			rejectUser.setName(user.getName());
+			rejectUser.setPassword(user.getPassword());
+			rejectUser.setRole(user.getRole());
+			rejectUser.setStatus(2);
+			rejectUser.setEmail(user.getEmail());
+			rejectUser.setPrincipal_type(user.getPrincipal_type());
+			rejectUser.setApplication_purpose(user.getApplication_purpose());
+			rejectUser.setCard_name(user.getCard_name());
+			rejectUser.setCard_no(user.getCard_no());
+			rejectUser.setRegistration_time(user.getRegistration_time());
+			rejectUser.setReview_time(user.getReview_time());
+			rejectUser.setReview_name(user.getReview_name());
+			rejectUser.setCode(user.getCode());
+			rejectUser.setFrom1(user.getFrom1());
+			variationService.addRejectUser(rejectUser);
+			variationService.userDelete(userId);
+			String email = user.getEmail();
+			if(message == null || message.equals("")) {
+				mailService.sendSimpleMail("h100kgp@163.com",email,"中国人群多组学参比数据库账号申请驳回通知","您的账号申请已被驳回，驳回原因：" + "\r\n" + " 您填写的信息不合格，请重新申请。" + "\r\n" + "如有疑问请联系：ydwang@hit.edu.cn");
+			}else {
+				mailService.sendSimpleMail("h100kgp@163.com",email,"中国人群多组学参比数据库账号申请驳回通知","您的账号申请已被驳回，驳回原因：" + "\r\n" + message + "\r\n" + "如有疑问请联系：ydwang@hit.edu.cn");
+			}
+	        res.put("userData", user);
+			res.put("code", 200);
+		    return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+		
+	}
+	
+	@RequestMapping("/userBan")
+	public Object userBan(@RequestBody Map<String,String> map){
+		try {
+			Map<String, Object> res = new HashMap();
+			String adminName = map.get("adminName");
+			String message = map.get("message");
+			Integer userId = Integer.parseInt(map.get("userId"));
+			List<AdminUser> adminUserList = variationService.getAdminInfo(adminName);
+			if (adminUserList.isEmpty()){
+				res.put("code", 205);
+			    return res;
+			}
+			User list = variationService.userBan(adminName, userId);
+			String email = list.getEmail();
+			String code = (Math.random()+"").substring(2,8);
+			if(message == null || message.equals("")) {
+				mailService.sendSimpleMail("h100kgp@163.com",email,"中国人群多组学参比数据库账号封禁通知","中国人群多组学参比数据库账号封禁通知： 您的账号已被封禁。" + "\r\n" + "如有疑问请联系：ydwang@hit.edu.cn");
+			}else {
+		        mailService.sendSimpleMail("h100kgp@163.com",email,"中国人群多组学参比数据库账号封禁通知","您的账号已被封禁，封禁原因：" + "\r\n" + message + "\r\n" + "如有疑问请联系：ydwang@hit.edu.cn");
+			}
+	        res.put("userData", list);
+			res.put("code", 200);
+		    return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+		
+	}
+	
+	@RequestMapping("/userLift")
+	public Object userLift(@RequestBody Map<String,String> map){
+		try {
+			Map<String, Object> res = new HashMap();
+			String adminName = map.get("adminName");
+			Integer userId = Integer.parseInt(map.get("userId"));
+			List<AdminUser> adminUserList = variationService.getAdminInfo(adminName);
+			if (adminUserList.isEmpty()){
+				res.put("code", 205);
+			    return res;
+			}
+			User list = variationService.userLift(adminName, userId);
+	        res.put("userData", list);
+			res.put("code", 200);
+		    return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+	}
+	
+	@RequestMapping("/userDelete")
+	public Object userDelete(@RequestBody Map<String,String> map){
+		try {
+			Map<String, Object> res = new HashMap();
+			String adminName = map.get("adminName");
+			Integer userId = Integer.parseInt(map.get("userId"));
+			List<AdminUser> adminUserList = variationService.getAdminInfo(adminName);
+			if (adminUserList.isEmpty()){
+				res.put("code", 205);
+			    return res;
+			}
+			variationService.userDelete(userId);
+			res.put("code", 200);
+		    return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+		
+	}
+	
+	public static String generateRandomString(int length) {
+        if (length < 1) {
+            return "";
+        }
+        Random random = new Random();
+        char[] chars = new char[length];
+        for (int i = 0; i < length; i++) {
+            // 随机选择字符来自字母表还是数字
+            boolean isLetter = random.nextInt(2) == 0; // 50% chance of being a letter
+            if (isLetter) {
+                // 生成一个大写字母（A-Z）或小写字母（a-z）
+                chars[i] = (char) ('A' + random.nextInt(26)); // Uppercase
+                // 若需要小写字母，取消注释下一行
+                chars[i] += 32; // Convert to lowercase
+            } else {
+                // 生成一个数字（0-9）
+                chars[i] = (char) ('0' + random.nextInt(10));
+            }
+        }
+        return new String(chars);
     }
 }

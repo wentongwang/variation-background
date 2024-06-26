@@ -1,11 +1,15 @@
 package com.spring.variation.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
+import com.spring.variation.domain.AdminUser;
 import com.spring.variation.domain.EmailCode;
 import com.spring.variation.domain.Genomic;
+import com.spring.variation.domain.RejectUser;
 import com.spring.variation.domain.User;
 import com.spring.variation.domain.Variation;
 import com.spring.variation.domain.VariationBasicChr1;
@@ -81,8 +85,18 @@ public interface VariationService{
 	
 	//登录
 	List<User> login(String userName, String passWord);
+	//审核账号登录
+	List<AdminUser> adminLogin(String userName, String passWord);
 	//用户信息
 	List<User> getInfo(String userName);
+	//审核账户列表
+	Page<User> findUserByCondition(Integer page, Integer size, String search);
+	
+	//待审核账户
+	void addUser(User user);
+	
+	//待审核账户
+	void addRejectUser(RejectUser rejectUser);
 	
 	//查询Varition type=gene时
 	List<VariationBasicChr1> geneDataVarition1(int start, int end, int chrom);
@@ -168,7 +182,34 @@ public interface VariationService{
 	//增加验证码表中数据
 	void addEmailCode(EmailCode emailcode);
 	
+	//查询邮箱是否注册
+	List<User> isReregisted(String email);
+	
+	//查询用户名是否注册
+	List<User> usernameIsReregisted(String name);
+	
 	//查询验证码
 	List<EmailCode> findEmailCode(String email);
+	
+	//审批通过
+	User userAdopt(String adminName, Integer userId);
+	
+	//审批驳回
+	User userReject(String adminName, Integer userId);
+	
+	//用户封禁
+	User userBan(String adminName, Integer userId);
+	
+	//用户解禁
+	User userLift(String adminName, Integer userId);
+	
+	//用户删除
+	void userDelete(Integer userId);
+
+	//重置密码
+	User forgot(Integer userId, String md5Password);
+	
+	//验证管理员身份
+	List<AdminUser> getAdminInfo(String adminName);
 	
 }
